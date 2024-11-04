@@ -1,4 +1,4 @@
-import { Component, inject } from "@angular/core";
+import { Component, effect, inject } from "@angular/core";
 import { RouterOutlet } from "@angular/router";
 import { ArduinoService } from "./services/arduino.service";
 
@@ -11,9 +11,22 @@ import { ArduinoService } from "./services/arduino.service";
 })
 export class AppComponent {
   title = "tui-instruments";
-  private arduinoService = inject(ArduinoService);
+  private readonly arduinoService = inject(ArduinoService);
+  public isArduinoConnected = this.arduinoService.isArduinoConnected();
+  public isDemoMode = this.arduinoService.isDemoMode();
+
+  constructor() {
+    effect(() => {
+      this.isArduinoConnected = this.arduinoService.isArduinoConnected();
+      this.isDemoMode = this.arduinoService.isDemoMode();
+    });
+  }
 
   public connect() {
     this.arduinoService.connectToArduino();
+  }
+
+  public toggleDemoMode() {
+    this.arduinoService.toggleDemoMode();
   }
 }

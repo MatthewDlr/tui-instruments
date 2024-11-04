@@ -1,9 +1,23 @@
-<div class="flex h-dvh w-full flex-col items-center justify-between bg-gray-950 p-20">
-  <button
-    type="button"
-    (click)="connect()"
-    class="rounded-full bg-white/25 px-3.5 py-2.5 text-sm font-semibold text-white shadow-sm ring-1 ring-inset ring-gray-500 transition-transform duration-200 hover:scale-105"
+<div class="flex h-dvh w-full flex-col items-center gap-5 bg-gray-950 p-20">
+  @if (isArduinoConnected && !isDemoMode) {
+    <button
+      type="button"
+      (click)="connect()"
+      class="rounded-full bg-white/25 px-3.5 py-2.5 text-sm font-semibold text-white shadow-sm ring-1 ring-inset ring-gray-500 transition-transform duration-200 hover:scale-105"
+    >
+      Connect to Arduino
+    </button>
+  }
+  <p
+    (click)="toggleDemoMode()"
+    (keyup)="toggleDemoMode()"
+    class="cursor-pointer text-center text-sm text-white underline transition-colors hover:text-opacity-90"
+    tabindex="0"
   >
-    Connect to Arduino
-  </button>
+    @if (isDemoMode) {
+      Disable Demo Mode
+    } @else {
+      Or enable Demo Mode
+    }
+  </p>
 </div>
