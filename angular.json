@@ -3,7 +3,7 @@
   "version": 1,
   "newProjectRoot": "projects",
   "projects": {
-    "TODO-name": {
+    "tui-instruments": {
       "projectType": "application",
       "schematics": {
         "@schematics/angular:component": {
@@ -77,10 +77,10 @@
           "builder": "@angular-devkit/build-angular:dev-server",
           "configurations": {
             "production": {
-              "buildTarget": "TODO-name:build:production"
+              "buildTarget": "tui-instruments:build:production"
             },
             "development": {
-              "buildTarget": "TODO-name:build:development"
+              "buildTarget": "tui-instruments:build:development"
             }
           },
           "defaultConfiguration": "development"
