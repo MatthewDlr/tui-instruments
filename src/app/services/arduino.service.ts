@@ -16,10 +16,6 @@ export class ArduinoService {
 
   constructor() {
     this.serial = new NgxSerial(this.dataHandler.bind(this));
-
-    effect(() => {
-      console.log("isArduinoConnected", this.isArduinoConnected());
-    });
   }
 
   public connectToArduino() {
