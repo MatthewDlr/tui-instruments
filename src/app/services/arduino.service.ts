@@ -33,10 +33,12 @@ export class ArduinoService {
     if (data === undefined || typeof data !== "string") return;
     console.log(data);
 
+    // Remove the trailing "\r" character
+    data = data.trim();
+
     const sensorEntries = data.split(", ");
     sensorEntries.forEach(entry => {
-      const sensorData = entry.split(": ");
-      if (sensorData.length !== 2) return;
+      const sensorData = entry.split(":");
 
       const sensorId = sensorData[0];
       const sensorValue = parseFloat(sensorData[1]);
@@ -44,7 +46,7 @@ export class ArduinoService {
       // force sensor values
       if (sensorId.startsWith("f")) {
         const index = parseInt(sensorId.substring(1), 10);
-        this.sensorValues[index] = sensorValue;
+        this.sensorValues[index - 1] = sensorValue;
       }
     });
 
