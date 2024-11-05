@@ -4,41 +4,43 @@ import { Injectable } from "@angular/core";
   providedIn: "root",
 })
 export class SoundEngineService {
-  private sounds = ["achievement", "coin", "game1", "storm", "wind", "wood"];
+  private birdsAudio = new Audio("/sounds/birds.mp3");
+  private candleCracklingAudio = new Audio("/sounds/candle-crackling.mp3");
+  private windChimesAudio = new Audio("/sounds/wind-chimes.mp3");
+  private yogaAudio = new Audio("/sounds/yoga.mp3");
 
   public generateSoundFromSensorValues(sensorValues: number[]) {
-    const maxSensorValue = Math.max(...sensorValues);
+    const [force1, force2, force3, force4] = sensorValues;
 
-    // Map sensor values to sounds
-    const soundSequence = sensorValues.map(value => {
-      const soundIndex = Math.floor((value / maxSensorValue) * (this.sounds.length - 1));
-      return this.sounds[soundIndex];
-    });
+    if (force1 > 256) {
+      this.birdsAudio.play();
+    } else {
+      this.birdsAudio.pause();
+    }
 
-    // Play the sounds in sequence
-    soundSequence.forEach((sound, index) => {
-      setTimeout(() => {
-        this.playSound(sound);
-      }, index * 1000); // Play each sound 1 second apart
-    });
+    if (force2 > 500) {
+      this.candleCracklingAudio.play();
+    } else {
+      this.candleCracklingAudio.pause();
+    }
+
+    if (force3 > 600) {
+      this.windChimesAudio.play();
+    } else {
+      this.windChimesAudio.pause();
+    }
+
+    if (force4 > 800) {
+      this.yogaAudio.play();
+    } else {
+      this.yogaAudio.pause();
+    }
   }
 
-  private playSound(soundName: string, duration?: number) {
-    const audio = new Audio(`sounds/${soundName}.mp3`);
-    audio
-      .play()
-      .then(() => {
-        console.log(`Playing sound: ${soundName}`);
-        if (duration && duration > 0) {
-          setTimeout(() => {
-            audio.pause();
-            audio.currentTime = 0;
-            console.log(`Stopped sound: ${soundName} after ${duration}ms`);
-          }, duration);
-        }
-      })
-      .catch(error => {
-        console.error(`Error playing sound: ${soundName}`, error);
-      });
+  public clearAllSounds() {
+    this.birdsAudio.pause();
+    this.candleCracklingAudio.pause();
+    this.windChimesAudio.pause();
+    this.yogaAudio.pause();
   }
 }

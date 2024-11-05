@@ -1,4 +1,4 @@
-import { computed, inject, Injectable, Signal, signal, WritableSignal } from "@angular/core";
+import { computed, effect, inject, Injectable, Signal, signal, WritableSignal } from "@angular/core";
 import { NgxSerial } from "ngx-serial";
 import { SoundEngineService } from "./sound-engine.service";
 
@@ -9,23 +9,29 @@ export class ArduinoService {
   private readonly soundEngine = inject(SoundEngineService);
   private serial: NgxSerial;
   private port: WritableSignal<unknown> = signal(undefined);
-  public isArduinoConnected: Signal<boolean> = computed(() => this.port !== undefined);
+  public isArduinoConnected: Signal<boolean> = computed(() => this.port() !== undefined);
   public isDemoMode: WritableSignal<boolean> = signal(false);
 
   private sensorValues: number[] = [];
 
   constructor() {
     this.serial = new NgxSerial(this.dataHandler.bind(this));
+
+    effect(() => {
+      console.log("isArduinoConnected", this.isArduinoConnected());
+    });
   }
 
   public connectToArduino() {
     this.serial.connect((port: unknown) => {
       this.port.set(port);
+      this.isDemoMode.set(false);
     });
   }
 
   private dataHandler(data: string) {
     if (data === undefined || typeof data !== "string") return;
+    console.log(data);
 
     const sensorEntries = data.split(", ");
     sensorEntries.forEach(entry => {
@@ -61,14 +67,16 @@ export class ArduinoService {
   private startDemoMode() {
     this.demoInterval = setInterval(() => {
       const sensorValues = Array.from({ length: 4 }, () => Math.floor(Math.random() * 1024));
+      console.log(sensorValues);
       this.soundEngine.generateSoundFromSensorValues(sensorValues);
-    }, 10);
+    }, 1000);
   }
 
   private stopDemoMode() {
     if (this.demoInterval) {
       clearInterval(this.demoInterval);
       this.demoInterval = null;
+      this.soundEngine.clearAllSounds();
     }
   }
 }
