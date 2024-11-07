@@ -1,1 +1,12 @@
-<div class="bg-gray-800 rounded-md h-80 w-[50rem]"></div>
+<div class="flex flex-col gap-2 p-3 border-gray-800 border rounded-xl">
+  @for (row of matrix(); track $index) {
+    <div class="flex gap-2">
+      @for (location of row; track $index) {
+        <div
+          class="size-20 rounded-md transition-all duration-300"
+          [ngClass]="location === true ? 'bg-blue-500 scale-bounce' : 'bg-gray-800'"
+        ></div>
+      }
+    </div>
+  }
+</div>

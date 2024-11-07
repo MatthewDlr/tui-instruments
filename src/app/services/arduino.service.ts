@@ -12,7 +12,10 @@ export class ArduinoService {
   public isArduinoConnected: Signal<boolean> = computed(() => this.port() !== undefined);
   public isDemoMode: WritableSignal<boolean> = signal(false);
 
-  public sensorMatrix: WritableSignal<boolean[][]> = signal([]);
+  public sensorMatrix: WritableSignal<boolean[][]> = signal([
+    [false, false, true, false],
+    [false, true, false, false],
+  ]);
   private sensorValues: number[] = [];
 
   constructor() {

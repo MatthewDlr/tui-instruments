@@ -1,0 +1,18 @@
+@keyframes scaleBounce {
+  0% {
+    transform: scale(1);
+  }
+  5% {
+    transform: scale(1.15);
+  }
+  10% {
+    transform: scale(1);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+.scale-bounce {
+  animation: scaleBounce 3s cubic-bezier(0, 0, 0.2, 1);
+}
