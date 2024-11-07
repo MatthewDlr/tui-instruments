@@ -37,6 +37,10 @@ export class SoundEngineService {
     }
   }
 
+  public generateSoundFromMatrix(matrix: boolean[][]) {
+    throw new Error("Not implemented");
+  }
+
   public clearAllSounds() {
     this.birdsAudio.pause();
     this.candleCracklingAudio.pause();

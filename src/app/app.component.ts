@@ -1,12 +1,11 @@
 import { Component, effect, inject } from "@angular/core";
-import { RouterOutlet } from "@angular/router";
 import { ArduinoService } from "./services/arduino.service";
-import { CommonModule } from "@angular/common";
+import { YogaMatComponent } from "./components/yoga-mat/yoga-mat.component";
 
 @Component({
   selector: "app-root",
   standalone: true,
-  imports: [RouterOutlet, CommonModule],
+  imports: [YogaMatComponent],
   templateUrl: "./app.component.html",
   styleUrl: "./app.component.scss",
 })
@@ -15,11 +14,13 @@ export class AppComponent {
   private readonly arduinoService = inject(ArduinoService);
   public isArduinoConnected = this.arduinoService.isArduinoConnected();
   public isDemoMode = this.arduinoService.isDemoMode();
+  public sensorMatrix = this.arduinoService.sensorMatrix();
 
   constructor() {
     effect(() => {
       this.isArduinoConnected = this.arduinoService.isArduinoConnected();
       this.isDemoMode = this.arduinoService.isDemoMode();
+      this.sensorMatrix = this.arduinoService.sensorMatrix();
     });
   }
 

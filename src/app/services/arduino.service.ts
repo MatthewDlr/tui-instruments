@@ -1,4 +1,4 @@
-import { computed, effect, inject, Injectable, Signal, signal, WritableSignal } from "@angular/core";
+import { computed, inject, Injectable, Signal, signal, WritableSignal } from "@angular/core";
 import { NgxSerial } from "ngx-serial";
 import { SoundEngineService } from "./sound-engine.service";
 
@@ -12,6 +12,7 @@ export class ArduinoService {
   public isArduinoConnected: Signal<boolean> = computed(() => this.port() !== undefined);
   public isDemoMode: WritableSignal<boolean> = signal(false);
 
+  public sensorMatrix: WritableSignal<boolean[][]> = signal([]);
   private sensorValues: number[] = [];
 
   constructor() {
@@ -25,6 +26,18 @@ export class ArduinoService {
     });
   }
 
+  //Date handler for the matrix
+  private parseMatrixString(matrixString: string): boolean[][] {
+    const rows = matrixString.split(";");
+    const matrix: boolean[][] = rows.map(row => {
+      return row.split(",").map(value => value === "1");
+    });
+    this.sensorMatrix.set(matrix);
+    console.log(matrix);
+    return matrix;
+  }
+
+  // Data handler for the force sensors
   private dataHandler(data: string) {
     if (data === undefined || typeof data !== "string") return;
     console.log(data);
@@ -60,7 +73,7 @@ export class ArduinoService {
     }
   }
 
-  private demoInterval: any;
+  private demoInterval: NodeJS.Timeout | null = null;
 
   private startDemoMode() {
     this.demoInterval = setInterval(() => {
