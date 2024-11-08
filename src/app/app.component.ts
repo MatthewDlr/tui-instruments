@@ -11,6 +11,7 @@ import { YogaMatComponent } from "./components/yoga-mat/yoga-mat.component";
 })
 export class AppComponent {
   title = "tui-instruments";
+  
   private readonly arduinoService = inject(ArduinoService);
   public isArduinoConnected = this.arduinoService.isArduinoConnected();
   public isDemoMode = this.arduinoService.isDemoMode();

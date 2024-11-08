@@ -16,7 +16,6 @@ export class ArduinoService {
     [false, false, true, false],
     [false, true, false, false],
   ]);
-  private sensorValues: number[] = [];
 
   constructor() {
     this.serial = new NgxSerial(this.dataHandler.bind(this));
@@ -30,39 +29,18 @@ export class ArduinoService {
   }
 
   //Date handler for the matrix
-  private parseMatrixString(matrixString: string): boolean[][] {
+  private dataHandler(matrixString: string) {
     const rows = matrixString.split(";");
     const matrix: boolean[][] = rows.map(row => {
       return row.split(",").map(value => value === "1");
     });
-    this.sensorMatrix.set(matrix);
+
     console.log(matrix);
-    return matrix;
-  }
+    this.sensorMatrix.set(matrix);
 
-  // Data handler for the force sensors
-  private dataHandler(data: string) {
-    if (data === undefined || typeof data !== "string") return;
-    console.log(data);
-
-    // Remove the trailing "\r" character
-    data = data.trim();
-
-    const sensorEntries = data.split(", ");
-    sensorEntries.forEach(entry => {
-      const sensorData = entry.split(":");
-
-      const sensorId = sensorData[0];
-      const sensorValue = parseFloat(sensorData[1]);
-
-      // force sensor values
-      if (sensorId.startsWith("f")) {
-        const index = parseInt(sensorId.substring(1), 10);
-        this.sensorValues[index - 1] = sensorValue;
-      }
-    });
-
-    this.soundEngine.generateSoundFromSensorValues(this.sensorValues);
+    if (matrix.length > 0) {
+      this.soundEngine.generateSoundFromMatrix(matrix);
+    }
   }
 
   toggleDemoMode() {
@@ -80,9 +58,10 @@ export class ArduinoService {
 
   private startDemoMode() {
     this.demoInterval = setInterval(() => {
-      const sensorValues = Array.from({ length: 4 }, () => Math.floor(Math.random() * 1024));
-      console.log(sensorValues);
-      this.soundEngine.generateSoundFromSensorValues(sensorValues);
+      const matrix = this.sensorMatrix();
+      const newMatrix = matrix.map(row => row.map(() => Math.random() > 0.5));
+      this.sensorMatrix.set(newMatrix);
+      this.soundEngine.generateSoundFromMatrix(newMatrix);
     }, 1000);
   }
 
