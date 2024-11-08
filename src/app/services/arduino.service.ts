@@ -13,8 +13,8 @@ export class ArduinoService {
   public isDemoMode: WritableSignal<boolean> = signal(false);
 
   public sensorMatrix: WritableSignal<boolean[][]> = signal([
-    [false, false, true, false],
-    [false, true, false, false],
+    [false, false, false, false],
+    [false, false, false, false],
   ]);
 
   constructor() {
