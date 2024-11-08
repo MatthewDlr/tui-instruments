@@ -53,7 +53,8 @@ export class SoundEngineService {
   }
 
   public clearAllSounds() {
-
+    this.kickLoop.pause();
+    this.kickLoop.currentTime = 0;
   }
 
   private playAudio(path: string) {
