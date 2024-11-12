@@ -37,7 +37,14 @@ export class ArduinoService {
       const pairs = matrixString.split(",");
       pairs.forEach(pair => {
         const [key, value] = pair.split(":").map(item => item.trim());
+        const index = parseInt(key.substring(1), 10);
         this.forceSensorMap.set(key, parseInt(value, 10));
+
+        if (index % 2 === 0) {
+          matrix[0][index / 2] = parseInt(value, 10) > 0;
+        } else {
+          matrix[1][Math.floor(index / 2)] = parseInt(value, 10) > 0;
+        }
       });
 
       console.log(this.forceSensorMap);
