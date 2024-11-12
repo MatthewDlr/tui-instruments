@@ -18,7 +18,7 @@ export class SoundEngineService {
       this.kickLoop.currentTime = 0;
     }
 
-    // If at least 3 sensors are active, play the a random drum between 1 and 6
+    // If at least 3 sensors are active, play a random drum between 1 and 6
     if (numberOfActiveSensors >= 3) {
       const randomDrum = Math.floor(Math.random() * 6) + 1;
       this.playAudio("Drum" + randomDrum);
