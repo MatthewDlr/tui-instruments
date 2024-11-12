@@ -16,6 +16,7 @@ export class ArduinoService {
     [false, false, false, false],
     [false, false, false, false],
   ]);
+  public forceSensorMap = new Map<string, number>();
 
   constructor() {
     this.serial = new NgxSerial(this.dataHandler.bind(this));
@@ -28,18 +29,32 @@ export class ArduinoService {
     });
   }
 
-  //Date handler for the matrix
   private dataHandler(matrixString: string) {
-    const rows = matrixString.split(";");
-    const matrix: boolean[][] = rows.map(row => {
-      return row.split(",").map(value => value === "1");
-    });
+    const matrix: boolean[][] = [];
 
-    console.log(matrix);
-    this.sensorMatrix.set(matrix);
+    if (matrixString.includes("A")) {
+      // Handle the case where we receive the force sensor values
+      const pairs = matrixString.split(",");
+      pairs.forEach(pair => {
+        const [key, value] = pair.split(":").map(item => item.trim());
+        this.forceSensorMap.set(key, parseInt(value, 10));
+      });
 
-    if (matrix.length > 0) {
-      this.soundEngine.generateSoundFromMatrix(matrix);
+      console.log(this.forceSensorMap);
+    } else {
+      // Handle the case where we receive the capacitive sensor matrix
+      const rows = matrixString.split(";");
+      rows.forEach(row => {
+        const rowArray = row.split(",").map(value => value === "1");
+        matrix.push(rowArray);
+      });
+
+      console.log(matrix);
+      this.sensorMatrix.set(matrix);
+
+      if (matrix.length > 0) {
+        this.soundEngine.generateSoundFromMatrix(matrix);
+      }
     }
   }
 
