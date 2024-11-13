@@ -65,6 +65,9 @@ export class ArduinoService {
       } else {
         this.sensorMatrix.set(forceMatrix);
       }
+      if (matrix.length > 0) {
+        this.soundEngine.generateSoundFromMatrix(matrix);
+      }
     } else if (this.inputMode() === "capacitive" || this.inputMode() === "both") {
       // Handle the case where we receive the capacitive sensor matrix
       const rows = matrixString.split(";");
@@ -75,10 +78,9 @@ export class ArduinoService {
 
       console.log(matrix);
       this.sensorMatrix.set(matrix);
-    }
-
-    if (matrix.length > 0) {
-      this.soundEngine.generateSoundFromMatrix(matrix);
+      if (matrix.length > 0) {
+        this.soundEngine.generateSoundFromMatrix(matrix);
+      }
     }
   }
 
