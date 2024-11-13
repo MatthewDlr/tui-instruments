@@ -7,6 +7,45 @@
     >
       Connect to Arduino
     </button>
+  } @else {
+    <span class="isolate inline-flex rounded-md p-20 shadow-sm">
+      <button
+        type="button"
+        (click)="toggleInputMode('capacitive')"
+        [ngClass]="
+          inputMode === 'capacitive'
+            ? 'text-primary-950 cursor-default bg-white font-semibold'
+            : 'font-normal text-white hover:bg-white/10'
+        "
+        class="relative flex w-24 items-center justify-center rounded-l-xl border border-white px-3 py-2 text-sm font-semibold"
+      >
+        Capacitive
+      </button>
+      <button
+        (click)="toggleInputMode('force')"
+        type="button"
+        [ngClass]="
+          inputMode === 'force'
+            ? 'text-primary-950 cursor-default bg-white font-semibold'
+            : 'font-normal text-white hover:bg-white/10'
+        "
+        class="relative -ml-px flex w-24 items-center justify-center border border-white px-3 py-2 text-sm"
+      >
+        Force
+      </button>
+      <button
+        (click)="toggleInputMode('both')"
+        type="button"
+        [ngClass]="
+          inputMode === 'both'
+            ? 'text-primary-950 cursor-default bg-white font-semibold'
+            : 'font-normal text-white hover:bg-white/10'
+        "
+        class="relative -ml-px flex w-24 items-center justify-center rounded-r-xl border border-white px-3 py-2 text-sm"
+      >
+        Both
+      </button>
+    </span>
   }
   <p
     (click)="toggleDemoMode()"
