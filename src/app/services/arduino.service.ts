@@ -11,7 +11,7 @@ export class ArduinoService {
   private port: WritableSignal<unknown> = signal(undefined);
   public isArduinoConnected: Signal<boolean> = computed(() => this.port() !== undefined);
   public isDemoMode: WritableSignal<boolean> = signal(false);
-  public inputMode: WritableSignal<"capacitive" | "force" | "both"> = signal("both");
+  public inputMode: WritableSignal<"capacitive" | "force" | "both"> = signal("force");
 
   public sensorMatrix: WritableSignal<boolean[][]> = signal([
     [false, false, false, false],
@@ -66,7 +66,7 @@ export class ArduinoService {
         this.sensorMatrix.set(forceMatrix);
       }
       if (matrix.length > 0) {
-        this.soundEngine.generateSoundFromMatrix(matrix);
+        this.soundEngine.generateSoundFromMatrix(forceMatrix);
       }
     } else if (this.inputMode() === "capacitive" || this.inputMode() === "both") {
       // Handle the case where we receive the capacitive sensor matrix
