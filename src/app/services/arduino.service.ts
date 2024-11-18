@@ -9,13 +9,14 @@ export class ArduinoService {
   private readonly soundEngine = inject(SoundEngineService);
   private serial: NgxSerial;
   private port: WritableSignal<unknown> = signal(undefined);
+
   public isArduinoConnected: Signal<boolean> = computed(() => this.port() !== undefined);
   public isDemoMode: WritableSignal<boolean> = signal(false);
-  public inputMode: WritableSignal<"capacitive" | "force" | "both"> = signal("force");
+  public inputMode: WritableSignal<"capacitive" | "force" | "both"> = signal("capacitive");
 
   public sensorMatrix: WritableSignal<boolean[][]> = signal([
-    [false, false, false, false],
-    [false, false, false, false],
+    [false, false, false],
+    [false, false, false],
   ]);
 
   constructor() {
@@ -31,56 +32,47 @@ export class ArduinoService {
 
   private dataHandler(matrixString: string) {
     console.log(matrixString);
-    const matrix: boolean[][] = [[]];
 
-    if ((this.inputMode() === "force" || this.inputMode() === "both") && matrixString.includes("A")) {
-      if (matrixString.endsWith(",")) matrixString = matrixString.slice(0, -1);
-      const forceSensorMap = new Map<string, number>();
-      const pairs = matrixString.split(",");
+    if ((this.inputMode() == "capacitive" || this.inputMode() == "both") && matrixString.startsWith("CS")) {
+      const sensorsString = matrixString.split(", ")
+      for (const sensorString of sensorsString) {
+        const sensor = sensorString.split(":")[0];
+        const value = Number(sensorString.split(":")[1]);
 
-      pairs.forEach(pair => {
-        if (pair) {
-          const [key, value] = pair.split(":");
-          const numericValue = Number(value);
-          const portNumber = Number(key[1]);
-          if (!isNaN(numericValue) && !isNaN(portNumber)) {
-            forceSensorMap.set(key, numericValue);
-          }
+        if (sensor == "CS1") {
+          this.sensorMatrix.update(matrix => {
+            matrix[0][2] = value === 1;
+            return matrix;
+          });
+        } else if (sensor == "CS2") {
+          this.sensorMatrix.update(matrix => {
+            matrix[0][1] = value === 1;
+            return matrix;
+          });
+        } else if (sensor == "CS3") {
+          this.sensorMatrix.update(matrix => {
+            matrix[0][0] = value === 1;
+            return matrix;
+          });
+        } else if (sensor == "CS4") {
+          this.sensorMatrix.update(matrix => {
+            matrix[1][2] = value === 1;
+            return matrix;
+          });
+        } else if (sensor == "CS5") {
+          this.sensorMatrix.update(matrix => {
+            matrix[1][1] = value === 1;
+            return matrix;
+          });
+        } else if (sensor == "CS6") {
+          this.sensorMatrix.update(matrix => {
+            matrix[1][0] = value === 1;
+            return matrix;
+          });
         }
-      });
-      const forceMatrix: boolean[][] = [[], []];
-      forceSensorMap.forEach((value, key) => {
-        const keyNumber = Number(key[1]);
-        if (keyNumber === 0 || keyNumber % 2 === 0) {
-          forceMatrix[0].push(value > 0);
-        } else {
-          forceMatrix[1].push(value > 0);
-        }
-      });
-      console.log(forceMatrix);
-      this.sensorMatrix.set(forceMatrix);
+      }
 
-      if (this.inputMode() === "both") {
-        this.sensorMatrix.set([...this.sensorMatrix(), ...forceMatrix]);
-      } else {
-        this.sensorMatrix.set(forceMatrix);
-      }
-      if (matrix.length > 0) {
-        this.soundEngine.generateSoundFromMatrix(forceMatrix);
-      }
-    } else if (this.inputMode() === "capacitive" || this.inputMode() === "both") {
-      // Handle the case where we receive the capacitive sensor matrix
-      const rows = matrixString.split(";");
-      rows.forEach(row => {
-        const rowArray = row.split(",").map(value => value === "1");
-        matrix.push(rowArray);
-      });
-
-      console.log(matrix);
-      this.sensorMatrix.set(matrix);
-      if (matrix.length > 0) {
-        this.soundEngine.generateSoundFromMatrix(matrix);
-      }
+      this.soundEngine.generateSoundFromMatrix(this.sensorMatrix());
     }
   }
 
